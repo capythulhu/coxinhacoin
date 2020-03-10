@@ -5,7 +5,7 @@
 #include <limits.h>
 
 #define HASH_LENGTH 8
-#define DIFICULTY 5
+#define DIFICULTY 50
 
 unsigned char *hash(unsigned char *input){
     const static unsigned char randomBytes[] = { 0x7c, 0x16, 0xc3, 0xb7, 0x00, 0xf9, 0xec, 0xaa };
@@ -46,17 +46,36 @@ bool increment_bytes(unsigned char *input){
     return true;
 }
 
-bool mine(unsigned char *input, int length){
-    unsigned char* output
+bool mine(unsigned char *seed, unsigned char *gold){
+    unsigned char* input = malloc(sizeof(char) * HASH_LENGTH * 2 + 1);
+    input[0] = '\0';
+    strcat(input, seed);
+    strcat(input, gold);
+
+    unsigned char* output = hash(input);
+    
+    print_bytes(output);
+
+    int i = 0;
+    while(!(output[i/8] & (128 >> (i % 8))) && i <= DIFICULTY) i++;
+    return i >= DIFICULTY;
 }
 
 int main(){
     unsigned char* bytes = malloc(sizeof(char) * HASH_LENGTH);
     memset(bytes, 0, HASH_LENGTH);
     
-    print_bytes(bytes);
-    while(increment_bytes(bytes)){
+    int i = 0;
+    while(!mine("aimeodeus", bytes)){
+        i++;
+        printf(" = ");
         print_bytes(bytes);
         printf("\n");
+        increment_bytes(bytes);
     }
+    printf(" = ");
+    print_bytes(bytes);
+
+    printf("\nBLOCO MINERADO! Hashes: %i\n", i);
+    
 }
