@@ -38,7 +38,7 @@ void print_bytes(unsigned char *input, int length){
 bool increment_bytes(unsigned char *input, int length){
     int i = 0;
     while(input[i] == UCHAR_MAX){
-        if(i >= length) return false;
+        if(i == length - 1) return false;
         input[i] = 0;
         i++;
     }
@@ -47,5 +47,12 @@ bool increment_bytes(unsigned char *input, int length){
 }
 
 int main(){
-    unsigned char* bytes = malloc(sizeof(char) * HASH_LENGTH);
+    unsigned char* bytes = malloc(sizeof(char) * 2);
+    memset(bytes, 0, 2);
+    
+    print_bytes(bytes, 2);
+    while(increment_bytes(bytes, 2)){
+        print_bytes(bytes, 2);
+        printf("\n");
+    }
 }
