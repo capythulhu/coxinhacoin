@@ -28,17 +28,17 @@ unsigned char *hash(unsigned char *input){
     return digest;
 }
 
-void print_bytes(unsigned char *input, int length){
+void print_bytes(unsigned char *input){
     int i;
-    for(i = 0; i < length; i++){
+    for(i = 0; i < HASH_LENGTH; i++){
         printf("%02x", input[i]);
     }
 }
 
-bool increment_bytes(unsigned char *input, int length){
+bool increment_bytes(unsigned char *input){
     int i = 0;
     while(input[i] == UCHAR_MAX){
-        if(i == length - 1) return false;
+        if(i == HASH_LENGTH - 1) return false;
         input[i] = 0;
         i++;
     }
@@ -46,13 +46,17 @@ bool increment_bytes(unsigned char *input, int length){
     return true;
 }
 
+bool mine(unsigned char *input, int length){
+    unsigned char* output
+}
+
 int main(){
-    unsigned char* bytes = malloc(sizeof(char) * 2);
-    memset(bytes, 0, 2);
+    unsigned char* bytes = malloc(sizeof(char) * HASH_LENGTH);
+    memset(bytes, 0, HASH_LENGTH);
     
-    print_bytes(bytes, 2);
-    while(increment_bytes(bytes, 2)){
-        print_bytes(bytes, 2);
+    print_bytes(bytes);
+    while(increment_bytes(bytes)){
+        print_bytes(bytes);
         printf("\n");
     }
 }
