@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <limits.h>
 
 #define HASH_LENGTH 8
+#define DIFICULTY 5
 
 unsigned char *hash(unsigned char *input){
     const static unsigned char randomBytes[] = { 0x7c, 0x16, 0xc3, 0xb7, 0x00, 0xf9, 0xec, 0xaa };
@@ -25,15 +28,24 @@ unsigned char *hash(unsigned char *input){
     return digest;
 }
 
-void print_bytes(unsigned char *input){
+void print_bytes(unsigned char *input, int length){
     int i;
-    for(i = 0; i < HASH_LENGTH; i++){
+    for(i = 0; i < length; i++){
         printf("%02x", input[i]);
     }
 }
 
+bool increment_bytes(unsigned char *input, int length){
+    int i = 0;
+    while(input[i] == UCHAR_MAX){
+        if(i >= length) return false;
+        input[i] = 0;
+        i++;
+    }
+    input[i]++;
+    return true;
+}
+
 int main(){
-    print_bytes(hash("banana"));
-    printf("\n");
-    print_bytes(hash("banano"));
+    unsigned char* bytes = malloc(sizeof(char) * HASH_LENGTH);
 }
