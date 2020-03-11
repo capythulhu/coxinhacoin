@@ -4,24 +4,27 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#include "hash.h"
 #include "bytes.h"
+#include "hash.h"
 #include "mining.h"
 
 int main(){
-    unsigned char* bytes = malloc(sizeof(char) * HASH_LENGTH);
-    memset(bytes, 0, HASH_LENGTH);
-    
+    buffer aaa = new_buffer(HASH_LENGTH);
+    printf("length: %i\n", aaa.length);
+    zero_buffer(aaa);
+
+    buffer seed = { "polenta", 7 };
+
     int i = 0;
-    while(!mine("aimeodeus", bytes)){
+    while(!mine(seed, aaa)){
         i++;
         printf(" = ");
-        print_bytes(bytes);
+        print_buffer(aaa);
         printf("\n");
-        increment_bytes(bytes);
+        increment_buffer(aaa);
     }
     printf(" = ");
-    print_bytes(bytes);
+    print_buffer(aaa);
 
     printf("\nBLOCO MINERADO! Hashes: %i\n", i);
     

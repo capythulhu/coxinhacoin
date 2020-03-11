@@ -1,16 +1,23 @@
-#define DIFICULTY 16
+#ifndef MINING_H
+#define MINING_H
 
-bool mine(unsigned char *seed, unsigned char *gold){
-    unsigned char* input = malloc(sizeof(char) * HASH_LENGTH * 2 + 1);
-    input[0] = '\0';
-    strcat(input, seed);
-    strcat(input, gold);
+#include "bytes.h"
+#include "hash.h"
 
-    unsigned char* output = hash(input);
+#define DIFICULTY 8
+
+bool mine(buffer seed, buffer gold){
+    buffer input = new_buffer(seed.length + gold.length);
     
-    print_bytes(output);
+    concat_buffer(&input, seed);
+    concat_buffer(&input, gold);
 
-    int i = 0;
-    while(!(output[i/8] & (128 >> (i % 8))) && i <= DIFICULTY) i++;
+    buffer output = hash(input);
+    
+    print_buffer(output);
+
+    int i = 0, j = 1 << (8 - 1);
+    while(!(output.bytes[i/8] & (j >> (i % 8))) && i <= DIFICULTY) i++;
     return i >= DIFICULTY;
 }
+#endif
