@@ -4,62 +4,9 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#define HASH_LENGTH 8
-#define DIFICULTY 50
-
-unsigned char *hash(unsigned char *input){
-    const static unsigned char randomBytes[] = { 0x7c, 0x16, 0xc3, 0xb7, 0x00, 0xf9, 0xec, 0xaa };
-    const static unsigned short int randomBytesLength = sizeof(randomBytes);
-
-    unsigned char *digest = malloc(sizeof(char) * HASH_LENGTH);
-    memset(digest, 0, HASH_LENGTH);
-    
-    int size = strlen(input), result = 0;
-    int i, j;
-    for(i = 0; i < size; i++){
-        for(j = 0; j < HASH_LENGTH; j++){
-            digest[i % HASH_LENGTH] = input[i] + i ^ randomBytes[(input[i] + i) % randomBytesLength];  
-        }
-        result ^= input[i] + i;
-    }
-    for(i = 0; i < HASH_LENGTH; i++){
-        digest[i] ^= result + i;
-    }
-    return digest;
-}
-
-void print_bytes(unsigned char *input){
-    int i;
-    for(i = 0; i < HASH_LENGTH; i++){
-        printf("%02x", input[i]);
-    }
-}
-
-bool increment_bytes(unsigned char *input){
-    int i = 0;
-    while(input[i] == UCHAR_MAX){
-        if(i == HASH_LENGTH - 1) return false;
-        input[i] = 0;
-        i++;
-    }
-    input[i]++;
-    return true;
-}
-
-bool mine(unsigned char *seed, unsigned char *gold){
-    unsigned char* input = malloc(sizeof(char) * HASH_LENGTH * 2 + 1);
-    input[0] = '\0';
-    strcat(input, seed);
-    strcat(input, gold);
-
-    unsigned char* output = hash(input);
-    
-    print_bytes(output);
-
-    int i = 0;
-    while(!(output[i/8] & (128 >> (i % 8))) && i <= DIFICULTY) i++;
-    return i >= DIFICULTY;
-}
+#include "hash.h"
+#include "bytes.h"
+#include "mining.h"
 
 int main(){
     unsigned char* bytes = malloc(sizeof(char) * HASH_LENGTH);
