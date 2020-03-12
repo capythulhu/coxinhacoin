@@ -58,7 +58,7 @@ void concat_buffer(buffer *a, buffer b){
         output[i + len] = b.bytes[i];
     }
 
-    //free(a->bytes);
+    free(a->bytes);
     a->bytes = output;
     a->length += b.length;
 }
