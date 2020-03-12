@@ -9,22 +9,22 @@
 #include "mining.h"
 
 int main(){
-    buffer aaa = new_buffer(HASH_LENGTH);
-    printf("length: %i\n", aaa.length);
-    zero_buffer(aaa);
+    buffer bytes = new_buffer(HASH_LENGTH);
+    printf("length: %i\n", bytes.length);
+    zero_buffer(bytes);
 
     buffer seed = { "polenta", 7 };
 
     int i = 0;
-    while(!mine(seed, aaa)){
+    while(!mine(seed, bytes)){
         i++;
         printf(" = ");
-        print_buffer(aaa);
+        print_buffer(bytes);
         printf("\n");
-        increment_buffer(aaa);
+        increment_buffer(bytes);
     }
     printf(" = ");
-    print_buffer(aaa);
+    print_buffer(bytes);
 
     printf("\nBLOCO MINERADO! Hashes: %i\n", i);
     
