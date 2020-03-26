@@ -7,16 +7,16 @@
 #include "bytes.h"
 #include "hash.h"
 #include "mining.h"
+#include "block.h"
 
 int main(){
     buffer bytes = new_buffer(HASH_LENGTH);
-    printf("length: %i\n", bytes.length);
     zero_buffer(bytes);
 
-    buffer seed = { "polenta", 7 };
+    block test = new_block((buffer){"coronavirus", 11}, (buffer){"00000000", HASH_LENGTH});
 
     int i = 0;
-    while(!mine(seed, bytes)){
+    while(!mine(test.hash, bytes)){
         i++;
         printf(" = ");
         print_buffer(bytes);
@@ -26,6 +26,7 @@ int main(){
     printf(" = ");
     print_buffer(bytes);
 
-    printf("\nBLOCO MINERADO! Hashes: %i\n", i);
-    
+    printf("\nBLOCO MINERADO!\nHashes: %i\n", i + 1);
+    print_buffer(test.data);
+    printf("\nTimestamp: %li", test.timestamp);
 }
