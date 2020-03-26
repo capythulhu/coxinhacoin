@@ -1,3 +1,4 @@
+// Header guards
 #ifndef BYTES_H
 #define BYTES_H
 
@@ -16,11 +17,13 @@
 #include <limits.h>
 #endif
 
+// Estrutura de um buffer (conjunto de bytes)
 typedef struct _buffer {
     unsigned char *bytes;
     int length;
 } buffer;
 
+// Gerar novo buffer
 buffer new_buffer(int length){
     buffer output;
     output.length = length;
@@ -32,6 +35,7 @@ buffer new_buffer(int length){
     return output;
 }
 
+// Zerar um buffer
 void zero_buffer(buffer input){
     int i;
     for(i = 0; i < input.length; i++){
@@ -39,6 +43,7 @@ void zero_buffer(buffer input){
     }
 }
 
+// Exibir um buffer
 void print_buffer(buffer input){
     int i;
     for(i = 0; i < input.length; i++){
@@ -46,6 +51,7 @@ void print_buffer(buffer input){
     }
 }
 
+// Concatenar um buffer "b" em um buffer "a"
 void concat_buffer(buffer *a, buffer b){
     int len = a->length;
     unsigned char *output = malloc(len + b.length);
@@ -63,6 +69,7 @@ void concat_buffer(buffer *a, buffer b){
     a->length += b.length;
 }
 
+// Incrementar um buffer
 bool increment_buffer(buffer input){
     int i = 0;
     while(input.bytes[i] == UCHAR_MAX){

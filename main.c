@@ -10,11 +10,14 @@
 #include "block.h"
 
 int main(){
+    // Buffer de gold para a mineração
     buffer bytes = new_buffer(HASH_LENGTH);
     zero_buffer(bytes);
 
+    // Bloco de teste
     block test = new_block((buffer){"coronavirus", 11}, (buffer){"00000000", HASH_LENGTH});
 
+    // Minerar e exibir as hashes e gold
     int i = 0;
     while(!mine(test.hash, bytes)){
         i++;

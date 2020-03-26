@@ -1,3 +1,4 @@
+// Header guards
 #ifndef HASH_H
 #define HASH_H
 
@@ -8,8 +9,10 @@
 
 #include "bytes.h"
 
+// Tamanho em bytes da hash
 #define HASH_LENGTH 8
 
+// Calcular a hash de um buffer
 buffer hash(buffer input){
     const static unsigned char randomBytes[] = { 0x78, 0x16, 0xc3, 0xb3, 0x52, 0xf9, 0xe4, 0xad };
     const static unsigned short int randomBytesLength = sizeof(randomBytes);

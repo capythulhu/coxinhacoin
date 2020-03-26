@@ -1,11 +1,17 @@
+// Header guards
 #ifndef MINING_H
 #define MINING_H
 
 #include "bytes.h"
 #include "hash.h"
 
+// Quantidade de bits em sequência iguais a 0
+// que uma hash deve começar com para que haja
+// a mineração do bloco
 #define DIFICULTY 8
 
+// Verifica se um buffer "gold" é uma hash de
+// mineração válida para um buffer "seed"
 bool mine(buffer seed, buffer gold){
     buffer input = new_buffer(seed.length + gold.length);
     

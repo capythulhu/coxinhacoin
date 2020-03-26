@@ -1,3 +1,4 @@
+// Header guards
 #ifndef BLOCK_H
 #define BLOCK_H
 
@@ -8,8 +9,10 @@
 
 #include "bytes.h"
 
+// Tamanho em bytes do conteúdo de cada bloco
 #define DATA_LENGTH 32
 
+// Estrutura do bloco
 typedef struct _block {
     buffer hash;
     buffer previousHash;
@@ -17,6 +20,7 @@ typedef struct _block {
     long timestamp;
 } block;
 
+// Calcular a hash de um bloco
 buffer get_block_hash(block b){
     buffer input = new_buffer(sizeof(long));
 
@@ -31,6 +35,7 @@ buffer get_block_hash(block b){
     return hash(input);
 }
 
+// Gerar novo bloco
 block new_block(buffer data, buffer previousHash){
     block output;
     output.previousHash = previousHash;
