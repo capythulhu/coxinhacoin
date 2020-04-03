@@ -2,9 +2,9 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#ifndef SYS_TIME_H
-#define SYS_TIME_H
-#include <sys/time.h>
+#ifndef TIME_H
+#define TIME_H
+#include <time.h>
 #endif
 
 #include "bytes.h"
@@ -41,9 +41,7 @@ block new_block(buffer data, buffer previousHash){
     output.previousHash = previousHash;
     output.data = data;
     
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    output.timestamp = tv.tv_sec;
+    output.timestamp = time(NULL);
 
     output.hash = get_block_hash(output);
 
