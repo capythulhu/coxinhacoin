@@ -8,8 +8,14 @@
 #include "hash.h"
 #include "mining.h"
 #include "block.h"
+#include "transaction.h"
 
 int main(){
+    wallet w = new_wallet();
+    transaction t = new_transaction(w, 1234, 10);
+
+    
+    /*
     // Buffer de gold para a mineração
     buffer bytes = new_buffer(HASH_LENGTH);
     zero_buffer(bytes);
@@ -32,4 +38,5 @@ int main(){
     printf("\nBLOCO MINERADO!\nHashes: %i\n", i + 1);
     print_buffer(test.data);
     printf("\nTimestamp: %li", test.timestamp);
+    */
 }

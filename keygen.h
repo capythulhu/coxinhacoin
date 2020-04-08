@@ -1,13 +1,32 @@
-#include <stdio.h>
+#ifndef KEYGEN_H
+#define KEYGEN_H
+
+#ifndef STDLIB_H
+#define STDLIB_H
 #include <stdlib.h>
+#endif
+
+#ifndef STDBOOL_H
+#define STDBOOL_H
 #include <stdbool.h>
-#include <math.h>
+#endif
+
+#ifndef SYS_TIME_H
+#define SYS_TIME_H
 #include <sys/time.h>
-// Tamanho máximo da mensagem
-#define MSG_LENGTH 100
+#endif
+
+#include "bytes.h"
+#include "ints.h"
+
+// Estrutura de uma chave
+typedef struct _rsaKey {
+    long key;
+    long n;
+} rsaKey;
 
 // Divisão de longs que salva o quociente e o resto
-void div_l(long *r, long *q, long a, long b){
+static void div_l(long *r, long *q, long a, long b){
     if(a >= 0){
         *q = 0;
         *r = a;
@@ -20,7 +39,7 @@ void div_l(long *r, long *q, long a, long b){
 }
 
 // Calcula o Algorítmo de Euclides Estendido para "a" e "b"
-int gcd_l(long a, long b){
+static int gcd_l(long a, long b){
     long r = a, q, x0 = 1, y0 = 0, x = 0, y = 1, alpha, beta, phi = a;
     while(r != 0){
        div_l(&r, &q, a, b);
@@ -41,7 +60,7 @@ int gcd_l(long a, long b){
 }
 
 // Calcula "a^e mod n" através de Exponenciação Quadrática
-long pow_mod_l(long a, long e, long n){
+static long pow_mod_l(long a, long e, long n){
     long p = 1;
     while(1){
         if(e == 0) return p;
@@ -56,7 +75,7 @@ long pow_mod_l(long a, long e, long n){
 }
 
 // Verifica se "n" é primo
-bool is_prime(int n){
+static bool is_prime(int n){
     int i;
     for(i = 2; i * i <= n; i++){
         if(n % i == 0) return false;
@@ -65,7 +84,7 @@ bool is_prime(int n){
 }
 
 // Obtém um "e" coprimo do totiente "phi" através dos primos "p" e "p2" e da chave pública "n"
-long get_e(long phi, int p, int p2, long n){
+static long get_e(long phi, int p, int p2, long n){
     long i;
     for(i = phi-p; i >= 2; i++){
         if(phi%i != 0 && i != p && i != p2){
@@ -75,79 +94,51 @@ long get_e(long phi, int p, int p2, long n){
 }
 
 // Primo aleatório de 1 byte
-int rand_prime(){
+static int rand_prime(){
     int num = rand() % (1<<8);
     while(is_prime(num++) == false);
     return num-1;
 }
 
 // Criptografa a mensagem "m" com as chaves públicas "e" e "n"
-int *encrypt(char *m, long e, long n){
+iBuffer encrypt(buffer m, rsaKey publicKey){
     int i;
-    int *C = malloc(MSG_LENGTH * sizeof(long));
-    for(i = 0; i < MSG_LENGTH; i++){
-        C[i] = pow_mod_l(m[i], e, n);
+    iBuffer C = new_iBuffer(m.length);
+    for(i = 0; i < m.length; i++){
+        C.ints[i] = pow_mod_l(m.bytes[i], publicKey.key, publicKey.n);
     }
     return C;
 }
 
 // Descriptografa a mensagem "C" com a chave privada "d" e a chave pública "n"
-char *decrypt(int *C, long d, long n){
+buffer decrypt(iBuffer C, rsaKey privateKey){
     int i;
-    char *m = malloc(MSG_LENGTH * sizeof(char));
-    for(i = 0; i < MSG_LENGTH; i++){
-        m[i] = pow_mod_l(C[i], d, n);
+    buffer m = new_buffer(C.length);
+    for(i = 0; i < C.length; i++){
+        m.bytes[i] = pow_mod_l(C.ints[i], privateKey.key, privateKey.n);
     }
     return m;
 }
 
-
-int main(){
+// Gera par de chaves
+long *get_keys(){
     // Randomização
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    srand(((long long)tv.tv_sec)*1000 + (tv.tv_usec/1000));
-
+    srand(((long long)tv.tv_sec)*1000 + (tv.tv_usec/1000)); 
     // Gera primos "p" e "p2"
     int p = rand_prime(), p2 = rand_prime();
     // Chaves públicas "n" e "e", totiente "phi" e chave privada "d"
     long n, phi, d, e;
-
-    // Mensagem original, array de ints para a mensagem
-    // criptografada, e array de chars para a mensagem
-    // descriptografada
-    char m[MSG_LENGTH];
-    int *C;
-    char *D;
-
-    // Lê a mensagem original do usuário
-    scanf("\n");
-    fgets(m, MSG_LENGTH, stdin);
-
-    // Calcula "n", "phi", "e" e "d"
+     // Calcula "n", "phi", "e" e "d"
     n = p * p2;
     phi = (p - 1)*(p2 - 1);
     e = get_e(phi, p, p2, n);
     d = gcd_l(phi, e);
-    printf("Chave publica: (%ld, %ld)\n", e, n);
-    printf("Chave privada: (%ld, %ld)\n", d, n);
-
-    // Criptografa a mensagem original e
-    // descriptografa a mensagem criptografada
-    C = encrypt(m, e, n);
-    D = decrypt(C, d, n);
-
-    // Printa a array de inteiros número por número
-    printf("Mensagem criptografada: ");
-    int i = 0;
-    while(m[i] != '\0'){
-        printf("%i ", C[i++]);
-    }
-    // Printa a string descriptografada
-    printf("\n");
-    printf("Mensagem descriptografada: %s", D);
-
-    // Libera a memória
-    free(C);
-    free(D);
+    long *keys = malloc(sizeof(long) * 3);
+    keys[0] = e;
+    keys[1] = d;
+    keys[2] = n;
+    return keys;
 }
+#endif
