@@ -16,7 +16,7 @@ int main(){
 
     
     /*
-    // Buffer de gold para a mineração
+    // buffer de gold para a mineração
     buffer bytes = new_buffer(HASH_LENGTH);
     zero_buffer(bytes);
 

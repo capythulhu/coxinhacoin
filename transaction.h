@@ -27,7 +27,7 @@ typedef struct _transaction {
     rsaKey senderKey;
     long reciepientKey;
     float value;
-    iBuffer signature;
+    ibuffer signature;
 } transaction;
 
 // Obtenho a hash pequena
@@ -62,7 +62,7 @@ transaction new_transaction(wallet senderWallet, long reciepientKey, float value
     output.value = value;
 
     buffer smallHash = get_transaction_small_hash(output);
-    iBuffer signature = encrypt(smallHash, senderWallet.publicKey);
+    ibuffer signature = encrypt(smallHash, senderWallet.publicKey);
     
     printf("Hash da transacao: ");
     print_buffer(smallHash);
@@ -70,7 +70,7 @@ transaction new_transaction(wallet senderWallet, long reciepientKey, float value
     printf("\n");
 
     printf("Assinatura da transacao: ");
-    print_iBuffer(signature);
+    print_ibuffer(signature);
 
     printf("\n");
 

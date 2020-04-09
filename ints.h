@@ -18,14 +18,14 @@
 #endif
 
 // Estrutura de um buffer (conjunto de longs)
-typedef struct _iBuffer {
+typedef struct _ibuffer {
     unsigned int *ints;
     int length;
-} iBuffer;
+} ibuffer;
 
 // Gerar novo buffer
-iBuffer new_iBuffer(int length){
-    iBuffer output;
+ibuffer new_ibuffer(int length){
+    ibuffer output;
     output.length = length;
     if(length > 0){
         output.ints = malloc(length * sizeof(long));
@@ -36,7 +36,7 @@ iBuffer new_iBuffer(int length){
 }
 
 // Zerar um buffer
-void zero_iBuffer(iBuffer input){
+void zero_ibuffer(ibuffer input){
     int i;
     for(i = 0; i < input.length; i++){
         input.ints[i] = 0;
@@ -44,7 +44,7 @@ void zero_iBuffer(iBuffer input){
 }
 
 // Exibir um buffer
-void print_iBuffer(iBuffer input){
+void print_ibuffer(ibuffer input){
     int i;
     for(i = 0; i < input.length; i++){
         printf("%i", input.ints[i]);

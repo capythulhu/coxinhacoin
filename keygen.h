@@ -101,9 +101,9 @@ static int rand_prime(){
 }
 
 // Criptografa a mensagem "m" com as chaves públicas "e" e "n"
-iBuffer encrypt(buffer m, rsaKey publicKey){
+ibuffer encrypt(buffer m, rsaKey publicKey){
     int i;
-    iBuffer C = new_iBuffer(m.length);
+    ibuffer C = new_ibuffer(m.length);
     for(i = 0; i < m.length; i++){
         C.ints[i] = pow_mod_l(m.bytes[i], publicKey.key, publicKey.n);
     }
@@ -111,7 +111,7 @@ iBuffer encrypt(buffer m, rsaKey publicKey){
 }
 
 // Descriptografa a mensagem "C" com a chave privada "d" e a chave pública "n"
-buffer decrypt(iBuffer C, rsaKey privateKey){
+buffer decrypt(ibuffer C, rsaKey privateKey){
     int i;
     buffer m = new_buffer(C.length);
     for(i = 0; i < C.length; i++){
