@@ -85,4 +85,14 @@ bool increment_buffer(buffer input){
     input.bytes[i]++;
     return true;
 }
+
+// Comparar dois buffers
+bool compare_buffer(buffer a, buffer b){
+    int i;
+    if(a.length != b.length) return false;
+    for(i = 0; i < a.length; i++){
+        if(a.bytes[i] != b.bytes[i]) return false;
+    }
+    return true;
+}
 #endif

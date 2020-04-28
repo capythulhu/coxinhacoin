@@ -47,9 +47,8 @@ void zero_ibuffer(ibuffer input){
 void print_ibuffer(ibuffer input){
     int i;
     for(i = 0; i < input.length; i++){
-        printf("%i", input.ints[i]);
+        printf("%08x", input.ints[i]);
         if(i < input.length - 1) printf("-");
     }
 }
-
 #endif

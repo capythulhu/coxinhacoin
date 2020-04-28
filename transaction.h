@@ -12,6 +12,11 @@
 #include <stdlib.h>
 #endif
 
+#ifndef STDBOOL_H
+#define STDBOOL_H
+#include <stdbool.h>
+#endif
+
 #include "keygen.h"
 #include "hash.h"
 #include "bytes.h"
@@ -54,6 +59,12 @@ buffer get_transaction_small_hash(transaction t){
     return output;
 }
 
+bool check_signature(transaction t){
+    buffer claimedHash = decrypt(t.signature, t.senderKey);
+    buffer originalHash = get_transaction_small_hash(t);
+    return compare_buffer(claimedHash, originalHash);
+}
+
 // Gerar nova transação
 transaction new_transaction(wallet senderWallet, long reciepientKey, float value){
     transaction output;
@@ -62,20 +73,24 @@ transaction new_transaction(wallet senderWallet, long reciepientKey, float value
     output.value = value;
 
     buffer smallHash = get_transaction_small_hash(output);
-    ibuffer signature = encrypt(smallHash, senderWallet.publicKey);
-    
+    output.signature = encrypt(smallHash, senderWallet.privateKey);
+
     printf("Hash da transacao: ");
     print_buffer(smallHash);
 
     printf("\n");
 
     printf("Assinatura da transacao: ");
-    print_ibuffer(signature);
+    print_ibuffer(output.signature);
 
     printf("\n");
 
     printf("Hash da transacao desencriptada: ");
-    print_buffer(decrypt(signature, senderWallet.publicKey));
+    print_buffer(decrypt(output.signature, senderWallet.publicKey));
+
+    printf("\n");
+    //output.signature.ints[0] = 5;
+    printf("Assinatura verificada? %i\n", check_signature(output));
     
     return output;
 }
