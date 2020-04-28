@@ -11,9 +11,9 @@
 #include <stdbool.h>
 #endif
 
-#ifndef SYS_TIME_H
-#define SYS_TIME_H
-#include <sys/time.h>
+#ifndef TIME_H
+#define TIME_H
+#include <time.h>
 #endif
 
 #include "bytes.h"
@@ -24,8 +24,8 @@
 
 // Estrutura de uma chave
 typedef struct _rsaKey {
-    long key;
-    long n;
+    long unsigned key;
+    long unsigned n;
 } rsaKey;
 
 // Divisão de longs que salva o quociente e o resto
@@ -123,7 +123,6 @@ buffer decrypt(ibuffer C, rsaKey privateKey){
 
 // Gera par de chaves
 long *get_keys(){
-    srand(time(NULL));
     unsigned short p;
     unsigned short q;
     unsigned int phi;

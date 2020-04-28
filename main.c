@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <time.h>
 
 #include "bytes.h"
 #include "hash.h"
@@ -11,8 +12,10 @@
 #include "transaction.h"
 
 int main(){
-    wallet w = new_wallet();
-    transaction t = new_transaction(w, 1234, 10);
+    srand(time(NULL));
+    wallet w1 = new_wallet();
+    wallet w2 = new_wallet();
+    transaction t = new_transaction(w1, w2.publicKey.key, 10);
 
     
     /*

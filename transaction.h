@@ -66,7 +66,7 @@ bool check_signature(transaction t){
 }
 
 // Gerar nova transação
-transaction new_transaction(wallet senderWallet, long reciepientKey, float value){
+transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, float value){
     transaction output;
     output.senderKey = senderWallet.publicKey;
     output.reciepientKey = reciepientKey;
@@ -75,6 +75,10 @@ transaction new_transaction(wallet senderWallet, long reciepientKey, float value
     buffer smallHash = get_transaction_small_hash(output);
     output.signature = encrypt(smallHash, senderWallet.privateKey);
 
+    printf("Transacao de: %lu (%lu)\n", senderWallet.publicKey.key, senderWallet.publicKey.n);
+    printf("Valor: %f\n", value);
+    printf("Para: %lu\n", reciepientKey);
+    printf("\n");
     printf("Hash da transacao: ");
     print_buffer(smallHash);
 
