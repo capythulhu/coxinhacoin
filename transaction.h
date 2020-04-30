@@ -28,9 +28,8 @@
 
 // Estrutura de uma transação
 typedef struct _transaction {
-    buffer hash;
     rsaKey senderKey;
-    long reciepientKey;
+    unsigned long reciepientKey;
     float value;
     ibuffer signature;
 } transaction;
@@ -86,14 +85,11 @@ transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, fl
 
     printf("Assinatura da transacao: ");
     print_ibuffer(output.signature);
-
     printf("\n");
-
     printf("Hash da transacao desencriptada: ");
     print_buffer(decrypt(output.signature, senderWallet.publicKey));
 
     printf("\n");
-    //output.signature.ints[0] = 5;
     printf("Assinatura verificada? %i\n", check_signature(output));
     
     return output;
