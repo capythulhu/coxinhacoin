@@ -58,6 +58,7 @@ buffer get_transaction_small_hash(transaction t){
     return output;
 }
 
+// Checar assinatura
 bool check_signature(transaction t){
     buffer claimedHash = decrypt(t.signature, t.senderKey);
     buffer originalHash = get_transaction_small_hash(t);

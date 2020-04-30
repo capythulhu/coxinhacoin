@@ -8,7 +8,7 @@
 
 #ifndef STDBOOL_H
 #define STDBOOL_H
-#include <stdlib.h>
+#include <stdbool.h>
 #endif
 
 typedef struct _listnode{
