@@ -43,7 +43,7 @@ hashnode *new_hashnode(buffer key, void *val){
     return output;
 }
 
-// Insere nó ´no hashmap
+// Insere nó no hashmap
 bool put_hashnode(hashmap *h, hashnode *n){
     if(!n || !h) return;
 
@@ -62,6 +62,33 @@ bool put_hashnode(hashmap *h, hashnode *n){
     h->size++;
 
     return true;
+}
+
+// Remove nó do hashmap
+bool rem_key_from_hashmap(hashmap *h, buffer key){
+    if(!h) return false;
+
+    hashnode *temp = h->first;
+    if(h->size <= 0 || !temp) return false;
+
+    if(compare_buffer(temp->key, key)) {
+        h->first = temp->next;
+        free(temp);
+        return true;
+    }
+    if(!temp->next) return false;
+    
+    hashnode *prev;
+    do {
+        prev = temp;
+        temp = temp->next;
+        if(compare_buffer(temp->key, key)) {
+            prev->next = temp->next;
+            free(temp);
+            return true;
+        }
+    } while(temp->next);
+    return false;
 }
 
 // Obtém um valor a partir da chave associada a ele

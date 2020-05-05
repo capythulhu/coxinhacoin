@@ -29,7 +29,7 @@ typedef struct _buffer {
 } buffer;
 
 // Gerar novo buffer
-buffer new_buffer(int length){
+buffer new_buffer(int length) {
     buffer output;
     output.length = length;
     if(length > 0){

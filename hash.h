@@ -7,10 +7,8 @@
 #include <string.h>
 #endif
 
+#include "coin.h"
 #include "bytes.h"
-
-// Tamanho em bytes da hash
-#define HASH_LENGTH 8
 
 // Calcular a hash de um buffer
 buffer hash(buffer input){
