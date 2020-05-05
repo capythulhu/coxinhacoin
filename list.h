@@ -11,16 +11,20 @@
 #include <stdbool.h>
 #endif
 
+
+// Nó da lista
 typedef struct _listnode{
     void *val;
     struct _listnode *next;
 } listnode;
 
+// Lista
 typedef struct _list{
     int size;
     struct _listnode *first;
 } list;
 
+// Nova lista
 list *new_list(){
     list *output = malloc(sizeof(list));
     output->size = 0;
@@ -28,6 +32,7 @@ list *new_list(){
     return output;
 }
 
+// Novo nó da lista
 listnode *new_listnode(buffer key, void *val){
     listnode *output = malloc(sizeof(listnode));
     output->val = val;
@@ -35,6 +40,7 @@ listnode *new_listnode(buffer key, void *val){
     return output;
 }
 
+// Insere o nó na lista
 bool put_listnode(list *l, listnode *n){
     if(!n || !l) return;
 

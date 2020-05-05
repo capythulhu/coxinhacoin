@@ -17,21 +17,27 @@
 #include <stdbool.h>
 #endif
 
+#include "list.h"
 #include "keygen.h"
 #include "hash.h"
 #include "bytes.h"
 #include "ints.h"
 #include "wallet.h"
+#include "transactionio.h"
 
 // Máximo de casas após a vírgula de um valor de uma transação
 #define DECIMAL_PLACES 6
 
 // Estrutura de uma transação
 typedef struct _transaction {
+    buffer id;
     rsaKey senderKey;
     unsigned long reciepientKey;
     float value;
     ibuffer signature;
+
+    list *inputs;
+    list *outputs;
 } transaction;
 
 // Obtenho a hash pequena
@@ -66,13 +72,16 @@ bool check_signature(transaction t){
 }
 
 // Gerar nova transação
-transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, float value){
+transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, float value, list *inputs){
     transaction output;
     output.senderKey = senderWallet.publicKey;
     output.reciepientKey = reciepientKey;
     output.value = value;
+    output.inputs = inputs ? inputs : new_list();
+    output.outputs = new_list();
 
     buffer smallHash = get_transaction_small_hash(output);
+    output.id = smallHash;
     output.signature = encrypt(smallHash, senderWallet.privateKey);
 
     printf("Transacao de: %lu (%lu)\n", senderWallet.publicKey.key, senderWallet.publicKey.n);

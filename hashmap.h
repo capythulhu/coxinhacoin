@@ -13,17 +13,20 @@
 
 #include "bytes.h"
 
+// Nó do hashmap
 typedef struct _hashnode{
     buffer key;
     void *val;
     struct _hashnode *next;
 } hashnode;
 
+// Hashmap
 typedef struct _hashmap{
     int size;
     struct _hashnode *first;
 } hashmap;
 
+// Novo hashmap
 hashmap *new_hashmap(){
     hashmap *output = malloc(sizeof(hashmap));
     output->size = 0;
@@ -31,6 +34,7 @@ hashmap *new_hashmap(){
     return output;
 }
 
+// Novo nó do hashmap
 hashnode *new_hashnode(buffer key, void *val){
     hashnode *output = malloc(sizeof(hashnode));
     output->key = key;
@@ -39,6 +43,7 @@ hashnode *new_hashnode(buffer key, void *val){
     return output;
 }
 
+// Insere nó ´no hashmap
 bool put_hashnode(hashmap *h, hashnode *n){
     if(!n || !h) return;
 
@@ -59,6 +64,7 @@ bool put_hashnode(hashmap *h, hashnode *n){
     return true;
 }
 
+// Obtém um valor a partir da chave associada a ele
 void *get_hashmap_val(hashmap *h, buffer key){
     if(!h) return;
 

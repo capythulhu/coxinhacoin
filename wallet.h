@@ -9,15 +9,30 @@
 
 #include "bytes.h"
 #include "keygen.h"
+#include "hashmap.h"
+#include "transactionio.h"
 
 // Estrutura da carteira
 typedef struct _wallet {
     rsaKey publicKey;
     rsaKey privateKey;
+    hashmap *transactionOuts;
 } wallet;
 
+// Obter saldo
+float get_balance(wallet w) {
+    float total = 0;
+    hashnode *temp = w.transactionOuts->first;
+
+    while(temp) {
+        total += ((transactionout*)(temp->val))->value;
+        temp = temp->next;
+    };
+    return total;
+}
+
 // Gerar nova carteira
-wallet new_wallet(){
+wallet new_wallet() {
     wallet output;
     long *keys = get_keys();
     output.publicKey.key = keys[0];

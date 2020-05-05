@@ -10,12 +10,18 @@
 #include "mining.h"
 #include "block.h"
 #include "transaction.h"
+#include "list.h"
+#include "hashmap.h"
 
 int main(){
+    
+    list *blockchain = new_list();
+    hashmap *transactionOuts = new_hashmap();
+
     srand(time(NULL));
     wallet w1 = new_wallet();
     wallet w2 = new_wallet();
-    transaction t = new_transaction(w1, w2.publicKey.key, 10);
+    transaction t = new_transaction(w1, w2.publicKey.key, 10, NULL);
 
     
     /*
