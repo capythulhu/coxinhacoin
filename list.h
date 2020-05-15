@@ -11,7 +11,6 @@
 #include <stdbool.h>
 #endif
 
-
 // Nó da lista
 typedef struct _listnode {
     void *val;
@@ -41,8 +40,12 @@ listnode *new_listnode(buffer key, void *val){
 }
 
 // Insere o nó na lista
-bool put_listnode(list *l, listnode *n){
-    if(!n || !l) return;
+bool put_val_on_list(list *l, void *val){
+    if(!l) return false;
+    
+    listnode *n = malloc(sizeof(listnode));
+    n->val = val;
+    n->next = NULL;
 
     listnode *temp = l->first;
     if(l->size <= 0 || !temp) {

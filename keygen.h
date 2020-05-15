@@ -16,11 +16,9 @@
 #include <time.h>
 #endif
 
+#include "coin.h"
 #include "bytes.h"
 #include "ints.h"
-
-#define PRIME_LENGTH 8
-#define MAX_GCD_ITERATIONS 10
 
 // Estrutura de uma chave
 typedef struct _rsaKey {

@@ -17,6 +17,7 @@
 #include <stdbool.h>
 #endif
 
+#include "coin.h"
 #include "list.h"
 #include "keygen.h"
 #include "hash.h"
@@ -24,9 +25,6 @@
 #include "ints.h"
 #include "wallet.h"
 #include "transactionio.h"
-
-// Máximo de casas após a vírgula de um valor de uma transação
-#define DECIMAL_PLACES 6
 
 // Estrutura de uma transação
 typedef struct _transaction {
@@ -40,8 +38,8 @@ typedef struct _transaction {
     list *outputs;
 } transaction;
 
-// Obtenho a hash pequena
-buffer get_transaction_small_hash(transaction t){
+// Obter a hash da transação
+buffer get_transaction_hash(transaction t) {
     buffer input = new_buffer(sizeof(long) + sizeof(float) + sizeof(rsaKey));
 
     int i;
@@ -67,7 +65,7 @@ buffer get_transaction_small_hash(transaction t){
 // Checar assinatura
 bool check_signature(transaction t){
     buffer claimedHash = decrypt(t.signature, t.senderKey);
-    buffer originalHash = get_transaction_small_hash(t);
+    buffer originalHash = get_transaction_hash(t);
     return compare_buffer(claimedHash, originalHash);
 }
 
@@ -82,26 +80,6 @@ transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float
 
     buffer transactionHash = get_transaction_hash(*output);
     output->id = transactionHash;
-
-/*
-    printf("Transacao de: %lu (%lu)\n", senderWallet.publicKey.key, senderWallet.publicKey.n);
-    printf("Valor: %f\n", value);
-    printf("Para: %lu\n", recipientKey);
-    printf("\n");
-    printf("Hash da transacao: ");
-    print_buffer(smallHash);
-
-    printf("\n");
-
-    printf("Assinatura da transacao: ");
-    print_ibuffer(output.signature);
-    printf("\n");
-    printf("Hash da transacao desencriptada: ");
-    print_buffer(decrypt(output.signature, senderWallet.publicKey));
-
-    printf("\n");
-    printf("Assinatura verificada? %i\n", check_signature(output));
-*/
     return output;
 }
 
@@ -109,8 +87,9 @@ static float get_transaction_inputs_value(transaction t) {
     float total = 0;
     hashnode* temp = t.inputs->first;
     while(temp) {
-        if(!((transactionin*)temp->val)->output) continue;
-        total += ((transactionin*)temp->val)->output->value;
+        if(((transactionin*)temp->val)->output) {
+           total += ((transactionin*)temp->val)->output->value;
+        }        
         temp = temp->next;
     }
     return total;
@@ -148,8 +127,13 @@ bool process_transaction(transaction *t, hashmap *outputs) {
     float remainder = inputs - t->value;
     t->id = get_transaction_hash(*t);
 
-    transactionout *senderToRecipient = new_transactionout(t->recipientKey, t->value, t->id);
-    transactionout *senderToSender = new_transactionout(t->senderKey.key, remainder, t->id);
+    transactionout *senderToRecipient = malloc(sizeof(transactionout));
+    *senderToRecipient = new_transactionout(t->recipientKey, t->value, t->id);
+    transactionout *senderToSender = malloc(sizeof(transactionout));
+    *senderToRecipient = new_transactionout(t->senderKey.key, remainder, t->id);
+
+    put_val_on_list(t->outputs, senderToRecipient);
+    put_val_on_list(t->outputs, senderToSender);
 
     temp = t->outputs->first;
     while(temp) {
@@ -158,8 +142,9 @@ bool process_transaction(transaction *t, hashmap *outputs) {
     }
     temp = t->inputs->first;
     while(temp) {
-        if(!((transactionin*)temp->val)->output) continue;
-        rem_key_from_hashmap(outputs, ((transactionin*)temp->val)->output->id);
+        if(!((transactionin*)temp->val)->output) {
+          rem_key_from_hashmap(outputs, ((transactionin*)temp->val)->output->id);
+        }
         temp = temp->next;
     }
     return true;

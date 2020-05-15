@@ -9,9 +9,6 @@
 
 #include "bytes.h"
 
-// Tamanho em bytes do conteúdo de cada bloco
-#define DATA_LENGTH 32
-
 // Estrutura do bloco
 typedef struct _block {
     buffer hash;
