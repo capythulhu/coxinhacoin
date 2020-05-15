@@ -1,23 +1,19 @@
 #ifndef TRANSACTIONIO_H
 #define TRANSACTIONIO_H
 
+#include "coin.h"
 #include "bytes.h"
 
 // Output de transação
 typedef struct _transactionout {
     buffer id;
-    unsigned long reciepientKey;
+    unsigned long recipientKey;
     float value;
     buffer transactionId;
 } transactionout;
 
 // Input de transação
 typedef struct _transactionin {
-<<<<<<< Updated upstream
-    buffer outId;
-    transactionout out;
-} transctionin;
-=======
     buffer outputId;
     transactionout *output;
 } transactionin;
@@ -54,5 +50,4 @@ transactionin *new_transactionin(buffer outputId) {
     output->outputId = outputId;
     return output;
 }
->>>>>>> Stashed changes
 #endif

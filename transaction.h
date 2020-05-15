@@ -32,7 +32,7 @@
 typedef struct _transaction {
     buffer id;
     rsaKey senderKey;
-    unsigned long reciepientKey;
+    unsigned long recipientKey;
     float value;
     ibuffer signature;
 
@@ -46,7 +46,7 @@ buffer get_transaction_small_hash(transaction t){
 
     int i;
     for(i = 0; i < sizeof(long); i++){
-        input.bytes[i] = t.reciepientKey & (0xff << (i * 8));
+        input.bytes[i] = t.recipientKey & (0xff << (i * 8));
     }
     int v = t.value * pow(10, DECIMAL_PLACES);
     for(i; i < sizeof(long) + sizeof(float); i++){
@@ -72,20 +72,6 @@ bool check_signature(transaction t){
 }
 
 // Gerar nova transação
-<<<<<<< Updated upstream
-transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, float value, list *inputs){
-    transaction output;
-    output.senderKey = senderWallet.publicKey;
-    output.reciepientKey = reciepientKey;
-    output.value = value;
-    output.inputs = inputs ? inputs : new_list();
-    output.outputs = new_list();
-
-    buffer smallHash = get_transaction_small_hash(output);
-    output.id = smallHash;
-    output.signature = encrypt(smallHash, senderWallet.privateKey);
-
-=======
 transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float value, list *inputs){
     transaction *output = malloc(sizeof(transaction));
     output->senderKey = senderKey;
@@ -98,10 +84,9 @@ transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float
     output->id = transactionHash;
 
 /*
->>>>>>> Stashed changes
     printf("Transacao de: %lu (%lu)\n", senderWallet.publicKey.key, senderWallet.publicKey.n);
     printf("Valor: %f\n", value);
-    printf("Para: %lu\n", reciepientKey);
+    printf("Para: %lu\n", recipientKey);
     printf("\n");
     printf("Hash da transacao: ");
     print_buffer(smallHash);
@@ -119,8 +104,6 @@ transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float
 */
     return output;
 }
-<<<<<<< Updated upstream
-=======
 
 static float get_transaction_inputs_value(transaction t) {
     float total = 0;
@@ -181,5 +164,4 @@ bool process_transaction(transaction *t, hashmap *outputs) {
     }
     return true;
 }
->>>>>>> Stashed changes
 #endif
