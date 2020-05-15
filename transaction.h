@@ -72,6 +72,7 @@ bool check_signature(transaction t){
 }
 
 // Gerar nova transação
+<<<<<<< Updated upstream
 transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, float value, list *inputs){
     transaction output;
     output.senderKey = senderWallet.publicKey;
@@ -84,6 +85,20 @@ transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, fl
     output.id = smallHash;
     output.signature = encrypt(smallHash, senderWallet.privateKey);
 
+=======
+transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float value, list *inputs){
+    transaction *output = malloc(sizeof(transaction));
+    output->senderKey = senderKey;
+    output->recipientKey = recipientKey;
+    output->value = value;
+    output->inputs = inputs ? inputs : new_list();
+    output->outputs = new_list();
+
+    buffer transactionHash = get_transaction_hash(*output);
+    output->id = transactionHash;
+
+/*
+>>>>>>> Stashed changes
     printf("Transacao de: %lu (%lu)\n", senderWallet.publicKey.key, senderWallet.publicKey.n);
     printf("Valor: %f\n", value);
     printf("Para: %lu\n", reciepientKey);
@@ -101,7 +116,70 @@ transaction new_transaction(wallet senderWallet, long unsigned reciepientKey, fl
 
     printf("\n");
     printf("Assinatura verificada? %i\n", check_signature(output));
-    
+*/
     return output;
 }
+<<<<<<< Updated upstream
+=======
+
+static float get_transaction_inputs_value(transaction t) {
+    float total = 0;
+    hashnode* temp = t.inputs->first;
+    while(temp) {
+        if(!((transactionin*)temp->val)->output) continue;
+        total += ((transactionin*)temp->val)->output->value;
+        temp = temp->next;
+    }
+    return total;
+}
+
+static float get_transaction_outputs_value(transaction t) {
+    float total = 0;
+    hashnode* temp = t.outputs->first;
+    while(temp) {
+        total += ((transactionout*)temp->val)->value;
+        temp = temp->next;
+    }
+    return total;
+}
+
+bool process_transaction(transaction *t, hashmap *outputs) {
+    if(check_signature(*t) == false) {
+        printf("\nTransaction signature does not match.");
+        return false;
+    }
+    listnode *temp = t->inputs->first;
+    while(temp) {
+        ((transactionin*)(temp->val))->output = get_hashmap_val(outputs, ((transactionin*)(temp->val))->outputId);
+        temp = temp->next;
+    }
+    if(t->value < MIN_TRANSACTION) {
+        printf("\nTransaction value too small.");
+        return false;
+    }
+    float inputs = get_transaction_inputs_value(*t);
+    if(inputs < t->value) {
+        printf("\nInsufficient funds.");
+        return false;
+    }
+    float remainder = inputs - t->value;
+    t->id = get_transaction_hash(*t);
+
+    transactionout *senderToRecipient = new_transactionout(t->recipientKey, t->value, t->id);
+    transactionout *senderToSender = new_transactionout(t->senderKey.key, remainder, t->id);
+
+    temp = t->outputs->first;
+    while(temp) {
+        put_val_on_hashmap(outputs, ((transactionout*)temp->val)->id, temp->val);
+        temp = temp->next;
+    }
+    temp = t->inputs->first;
+    while(temp) {
+        if(!((transactionin*)temp->val)->output) continue;
+        rem_key_from_hashmap(outputs, ((transactionin*)temp->val)->output->id);
+        temp = temp->next;
+    }
+    return true;
+}
+>>>>>>> Stashed changes
 #endif
