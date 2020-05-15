@@ -25,7 +25,7 @@
 // Estrutura de um buffer (conjunto de bytes)
 typedef struct _buffer {
     unsigned char *bytes;
-    int length;
+    unsigned length;
 } buffer;
 
 // Gerar novo buffer

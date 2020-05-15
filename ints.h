@@ -20,7 +20,7 @@
 // Estrutura de um buffer (conjunto de longs)
 typedef struct _ibuffer {
     unsigned int *ints;
-    int length;
+    unsigned length;
 } ibuffer;
 
 // Gerar novo buffer

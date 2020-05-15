@@ -115,13 +115,13 @@ bool process_transaction(transaction *t, hashmap *outputs) {
         ((transactionin*)(temp->val))->output = get_hashmap_val(outputs, ((transactionin*)(temp->val))->outputId);
         temp = temp->next;
     }
-    if(t->value < MIN_TRANSACTION) {
-        printf("\nTransaction value too small.");
-        return false;
-    }
     float inputs = get_transaction_inputs_value(*t);
     if(inputs < t->value) {
         printf("\nInsufficient funds.");
+        return false;
+    }
+    if(t->value < MIN_TRANSACTION) {
+        printf("\nTransaction value too small.");
         return false;
     }
     float remainder = inputs - t->value;
@@ -130,7 +130,7 @@ bool process_transaction(transaction *t, hashmap *outputs) {
     transactionout *senderToRecipient = malloc(sizeof(transactionout));
     *senderToRecipient = new_transactionout(t->recipientKey, t->value, t->id);
     transactionout *senderToSender = malloc(sizeof(transactionout));
-    *senderToRecipient = new_transactionout(t->senderKey.key, remainder, t->id);
+    *senderToSender = new_transactionout(t->senderKey.key, remainder, t->id);
 
     put_val_on_list(t->outputs, senderToRecipient);
     put_val_on_list(t->outputs, senderToSender);

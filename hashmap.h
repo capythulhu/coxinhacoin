@@ -22,7 +22,7 @@ typedef struct _hashnode{
 
 // Hashmap
 typedef struct _hashmap{
-    int size;
+    unsigned size;
     struct _hashnode *first;
 } hashmap;
 
@@ -105,5 +105,28 @@ void *get_hashmap_val(hashmap *h, buffer key){
     
     if(compare_buffer(temp->key, key)) return temp->val;
     return NULL;
+}
+
+// Insere o nó no hashmap
+bool put_val_on_hashmap(hashmap *h, buffer key, void *val){
+    if(!h) return false;
+    
+    hashnode *n = malloc(sizeof(hashnode));
+    n->key = key;
+    n->val = val;
+    n->next = NULL;
+
+    hashnode *temp = h->first;
+    if(h->size <= 0 || !temp) {
+        h->first = n;
+        h->size = 1;
+        return true;
+    }
+
+    while(temp->next) temp = temp->next;
+    temp->next = n;
+    h->size++;
+    
+    return true;
 }
 #endif

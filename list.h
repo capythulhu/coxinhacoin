@@ -19,7 +19,7 @@ typedef struct _listnode {
 
 // Lista
 typedef struct _list{
-    int size;
+    unsigned size;
     struct _listnode *first;
 } list;
 
@@ -59,5 +59,19 @@ bool put_val_on_list(list *l, void *val){
     l->size++;
     
     return true;
+}
+
+// Obter valor de lista
+void *get_val_from_list(list *l, int index){
+    if(!l) return false;
+
+    int i = 0;
+    listnode *temp = l->first;
+    while(temp){
+        if(i == index) return temp;
+        i++;
+        temp = temp->next;
+    }
+    return NULL;
 }
 #endif
