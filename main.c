@@ -21,7 +21,7 @@ int main(){
     srand(time(NULL));
     wallet w1 = new_wallet();
     wallet w2 = new_wallet();
-    transaction t = new_transaction(w1, w2.publicKey.key, 10, NULL);
+    transaction *t = new_transaction(w1, w2.publicKey.key, 10, NULL);
 
     
     /*

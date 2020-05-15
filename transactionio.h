@@ -36,17 +36,18 @@ buffer get_transactionout_hash(transactionout t) {
     return output;
 }
 
-transactionout new_transactionout(unsigned long recipientKey, float value, buffer transactionId) {
-    transactionout output;
-    output.recipientKey = recipientKey;
-    output.value = value;
-    output.transactionId = transactionId;
-    output.id = get_transactionout_hash(output);
+transactionout *new_transactionout(unsigned long recipientKey, float value, buffer transactionId) {
+    transactionout *output = malloc(sizeof(transactionout));
+    output->recipientKey = recipientKey;
+    output->value = value;
+    output->transactionId = transactionId;
+    output->id = get_transactionout_hash(*output);
     return output;
 }
 
-transactionin new_transactionin(buffer outputId) {
-    transactionin output;
-    output.outputId = outputId;
+transactionin *new_transactionin(buffer outputId) {
+    transactionin *output = malloc(sizeof(transactionin));
+    output->outputId = outputId;
+    return output;
 }
 #endif

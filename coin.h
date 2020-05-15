@@ -18,4 +18,6 @@
 // Estendido para que se pule para o método de
 // tentativa e erro
 #define MAX_GCD_ITERATIONS 10
+// Transação mínima
+#define MIN_TRANSACTION 0.000001
 #endif

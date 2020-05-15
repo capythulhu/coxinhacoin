@@ -12,7 +12,7 @@
 #endif
 
 // Nó da lista
-typedef struct _listnode{
+typedef struct _listnode {
     void *val;
     struct _listnode *next;
 } listnode;
