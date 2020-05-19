@@ -23,8 +23,13 @@ typedef struct _list{
     struct _listnode *first;
 } list;
 
+list *new_list(void);
+listnode *new_listnode(buffer key, void *val);
+bool put_val_on_list(list *l, void *val);
+void *get_val_from_list(list *l, int index);
+
 // Nova lista
-list *new_list(){
+list *new_list(void) {
     list *output = malloc(sizeof(list));
     output->size = 0;
     output->first = NULL;
@@ -32,7 +37,7 @@ list *new_list(){
 }
 
 // Novo nó da lista
-listnode *new_listnode(buffer key, void *val){
+listnode *new_listnode(buffer key, void *val) {
     listnode *output = malloc(sizeof(listnode));
     output->val = val;
     output->next = NULL;
@@ -40,7 +45,7 @@ listnode *new_listnode(buffer key, void *val){
 }
 
 // Insere o nó na lista
-bool put_val_on_list(list *l, void *val){
+bool put_val_on_list(list *l, void *val) {
     if(!l) return false;
     
     listnode *n = malloc(sizeof(listnode));
@@ -62,13 +67,13 @@ bool put_val_on_list(list *l, void *val){
 }
 
 // Obter valor de lista
-void *get_val_from_list(list *l, int index){
-    if(!l) return false;
+void *get_val_from_list(list *l, int index) {
+    if(!l) return NULL;
 
     int i = 0;
     listnode *temp = l->first;
-    while(temp){
-        if(i == index) return temp;
+    while(temp) {
+        if(i == index) return temp->val;
         i++;
         temp = temp->next;
     }

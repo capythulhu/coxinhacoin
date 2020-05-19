@@ -2,6 +2,11 @@
 #ifndef WALLET_H
 #define WALLET_H
 
+#ifndef STDLIB_H
+#define STDLIB_H
+#include <stdlib.h>
+#endif
+
 #ifndef TIME_H
 #define TIME_H
 #include <time.h>
@@ -21,38 +26,48 @@ typedef struct _wallet {
     hashmap *transactionOuts;
 } wallet;
 
+wallet *new_wallet(void);
+float get_balance(const wallet *w, hashmap *outputs);
+transaction *send_funds(const wallet *w, unsigned long recipientKey, float value, hashmap *outputs);
+
 // Gerar nova carteira
-wallet new_wallet() {
-    wallet output;
-    long *keys = get_keys();
-    output.publicKey.key = keys[0];
-    output.privateKey.key = keys[1];
-    output.publicKey.n = keys[2];
-    output.privateKey.n = keys[2];
+wallet *new_wallet(void) {
+    wallet *output = malloc(sizeof(wallet));
+    unsigned long *keys = get_keys();
+    output->publicKey.key = keys[0];
+    output->privateKey.key = keys[1];
+    output->publicKey.n = keys[2];
+    output->privateKey.n = keys[2];
+    output->transactionOuts = new_hashmap();
     return output;
 }
 
 // Obter saldo
-float get_balance(wallet w) {
+float get_balance(const wallet *w, hashmap *outputs) {
     float total = 0;
-    hashnode *temp = w.transactionOuts->first;
+    hashnode *temp = outputs->first;
 
     while(temp) {
-        total += ((transactionout*)(temp->val))->value;
+        transactionout *current = ((transactionout*)temp->val);
+        if(current->recipientKey == w->publicKey.key) {
+            total += current->value;
+            put_val_on_hashmap(w->transactionOuts, current->id, current);
+        }
         temp = temp->next;
     };
     return total;
 }
 
-transaction *send_funds(wallet w, unsigned long recipientKey, float value) {
-    if(get_balance(w) < value) {
-        printf("\nNot enough funds to complete transaction.");
+// Fazer uma transação
+transaction *send_funds(const wallet *w, unsigned long recipientKey, float value, hashmap *outputs) {
+    if(get_balance(w, outputs) < value) {
+        printf("Not enough funds to complete transaction.\n");
         return NULL;
     }
     list *inputs = new_list();
     
     float total = 0;
-    hashnode *temp = w.transactionOuts->first;
+    hashnode *temp = w->transactionOuts->first;
 
     while(temp) {
         transactionout *out = (transactionout*)(temp->val);
@@ -62,12 +77,13 @@ transaction *send_funds(wallet w, unsigned long recipientKey, float value) {
         temp = temp->next;
     };
 
-    transaction *t = new_transaction(w.publicKey, recipientKey, value, inputs);
-    t->signature = encrypt(t->id, w.privateKey);
+    transaction *t = new_transaction(w->publicKey, recipientKey, value, inputs);
+    t->signature = encrypt(t->id, w->privateKey);
 
     listnode *input = inputs->first;
     while(input) {
-        rem_key_from_hashmap(w.transactionOuts, (((transactionin*)input->val))->outputId);
+        rem_key_from_hashmap(w->transactionOuts, (((transactionin*)input->val))->outputId);
+        input = input->next;
     }
 
     return t;

@@ -26,8 +26,15 @@ typedef struct _hashmap{
     struct _hashnode *first;
 } hashmap;
 
+hashmap *new_hashmap(void);
+hashnode *new_hashnode(buffer key, void *val);
+bool put_hashnode(hashmap *h, hashnode *n);
+bool rem_key_from_hashmap(hashmap *h, buffer key);
+void *get_hashmap_val(hashmap *h, buffer key);
+bool put_val_on_hashmap(hashmap *h, buffer key, void *val);
+
 // Novo hashmap
-hashmap *new_hashmap(){
+hashmap *new_hashmap(void) {
     hashmap *output = malloc(sizeof(hashmap));
     output->size = 0;
     output->first = NULL;
@@ -35,7 +42,7 @@ hashmap *new_hashmap(){
 }
 
 // Novo nó do hashmap
-hashnode *new_hashnode(buffer key, void *val){
+hashnode *new_hashnode(buffer key, void *val) {
     hashnode *output = malloc(sizeof(hashnode));
     output->key = key;
     output->val = val;
@@ -44,8 +51,8 @@ hashnode *new_hashnode(buffer key, void *val){
 }
 
 // Insere nó no hashmap
-bool put_hashnode(hashmap *h, hashnode *n){
-    if(!n || !h) return;
+bool put_hashnode(hashmap *h, hashnode *n) {
+    if(!n || !h) return false;
 
     hashnode *temp = h->first;
     if(h->size <= 0 || !temp) {
@@ -54,7 +61,7 @@ bool put_hashnode(hashmap *h, hashnode *n){
         return true;
     }
 
-    while(temp->next){
+    while(temp->next) {
         if(compare_buffer(temp->key, n->key)) return false;
         temp = temp->next;
     }
@@ -65,7 +72,7 @@ bool put_hashnode(hashmap *h, hashnode *n){
 }
 
 // Remove nó do hashmap
-bool rem_key_from_hashmap(hashmap *h, buffer key){
+bool rem_key_from_hashmap(hashmap *h, buffer key) {
     if(!h) return false;
 
     hashnode *temp = h->first;
@@ -74,6 +81,7 @@ bool rem_key_from_hashmap(hashmap *h, buffer key){
     if(compare_buffer(temp->key, key)) {
         h->first = temp->next;
         free(temp);
+        h->size--;
         return true;
     }
     if(!temp->next) return false;
@@ -85,6 +93,7 @@ bool rem_key_from_hashmap(hashmap *h, buffer key){
         if(compare_buffer(temp->key, key)) {
             prev->next = temp->next;
             free(temp);
+            h->size--;
             return true;
         }
     } while(temp->next);
@@ -92,13 +101,13 @@ bool rem_key_from_hashmap(hashmap *h, buffer key){
 }
 
 // Obtém um valor a partir da chave associada a ele
-void *get_hashmap_val(hashmap *h, buffer key){
-    if(!h) return;
+void *get_hashmap_val(hashmap *h, buffer key) {
+    if(!h) return NULL;
 
     hashnode *temp = h->first;
     if(!temp) return NULL;
 
-    while(temp->next){
+    while(temp->next) {
         if(compare_buffer(temp->key, key)) return temp->val;
         temp = temp->next;
     }
@@ -108,7 +117,7 @@ void *get_hashmap_val(hashmap *h, buffer key){
 }
 
 // Insere o nó no hashmap
-bool put_val_on_hashmap(hashmap *h, buffer key, void *val){
+bool put_val_on_hashmap(hashmap *h, buffer key, void *val) {
     if(!h) return false;
     
     hashnode *n = malloc(sizeof(hashnode));

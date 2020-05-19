@@ -23,11 +23,15 @@ typedef struct _ibuffer {
     unsigned length;
 } ibuffer;
 
+ibuffer new_ibuffer(int length);
+void zero_ibuffer(ibuffer input);
+void print_ibuffer(ibuffer input);
+
 // Gerar novo buffer
-ibuffer new_ibuffer(int length){
+ibuffer new_ibuffer(int length) {
     ibuffer output;
     output.length = length;
-    if(length > 0){
+    if(length > 0) {
         output.ints = malloc(length * sizeof(long));
     } else {
         output.ints = NULL;
@@ -36,17 +40,17 @@ ibuffer new_ibuffer(int length){
 }
 
 // Zerar um buffer
-void zero_ibuffer(ibuffer input){
+void zero_ibuffer(ibuffer input) {
     int i;
-    for(i = 0; i < input.length; i++){
+    for(i = 0; i < input.length; i++) {
         input.ints[i] = 0;
     }
 }
 
 // Exibir um buffer
-void print_ibuffer(ibuffer input){
+void print_ibuffer(ibuffer input) {
     int i;
-    for(i = 0; i < input.length; i++){
+    for(i = 0; i < input.length; i++) {
         printf("%08x", input.ints[i]);
         if(i < input.length - 1) printf("-");
     }
