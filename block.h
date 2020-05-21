@@ -22,7 +22,6 @@ typedef struct _block {
 
 buffer get_block_hash(const block *b);
 block *new_block(buffer previousHash);
-static bool mine(buffer seed, buffer gold);
 void mine_block(block *b);
 bool put_transaction_on_block(block *b, transaction *t, hashmap *outputs);
 
@@ -66,10 +65,8 @@ void mine_block(block *b) {
     b->id = get_block_hash(b);
     b->gold = new_buffer(HASH_LENGTH);
 
-    while(!mine(b->id, b->gold)) increment_buffer(b->gold);
-    printf("Block mined. Gold: ");
-    print_buffer(b->gold);
-    printf("\n");
+    while(!mine(b->id, b->gold, true)) increment_buffer(b->gold);
+    printf("Block mined.\n");
 }
 
 // Adiciona transação

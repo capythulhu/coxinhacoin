@@ -16,7 +16,7 @@
 #include "bytes.h"
 
 buffer hash(buffer input);
-static bool mine(buffer seed, buffer gold);
+static bool mine(buffer seed, buffer gold, bool echo);
 
 // Calcular a hash de um buffer
 buffer hash(buffer input) {
@@ -43,7 +43,7 @@ buffer hash(buffer input) {
 
 // Verifica se um buffer "gold" é uma hash de
 // mineração válida para um buffer "seed"
-static bool mine(buffer seed, buffer gold) {    
+static bool mine(buffer seed, buffer gold, bool echo) {    
     buffer input = new_buffer(seed.length + gold.length);
         
     concat_buffer(&input, seed);
@@ -51,10 +51,12 @@ static bool mine(buffer seed, buffer gold) {
 
     buffer output = hash(input);
 
-    print_buffer(output);
-    printf(" = ");
-    print_buffer(gold);
-    printf("\n");
+    if(echo) {
+        print_buffer(output);
+        printf(" = ");
+        print_buffer(gold);
+        printf("\n");
+    }
 
     int i = 0, j = 1 << (8 - 1);
     while(!(output.bytes[i/8] & (j >> (i % 8))) && i <= DIFFICULTY) i++;

@@ -38,30 +38,30 @@ typedef struct _transaction {
     list *outputs;
 } transaction;
 
-buffer get_transaction_hash(transaction t);
-bool check_signature(transaction t);
+buffer get_transaction_hash(const transaction *t);
+bool check_signature(const transaction *t);
 transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float value, list *inputs);
-static float get_transaction_inputs_value(transaction t);
-static float get_transaction_outputs_value(transaction t);
+static float get_transaction_inputs_value(const transaction *t);
+static float get_transaction_outputs_value(const transaction *t);
 bool process_transaction(transaction *t, hashmap *outputs);
 
 // Obter a hash da transação
-buffer get_transaction_hash(transaction t) {
+buffer get_transaction_hash(const transaction *t) {
     buffer input = new_buffer(sizeof(long) + sizeof(float) + sizeof(rsaKey));
 
     int i;
     for(i = 0; i < sizeof(long); i++) {
-        input.bytes[i] = t.recipientKey & (0xff << (i * 8));
+        input.bytes[i] = t->recipientKey & (0xff << (i * 8));
     }
-    int v = t.value * pow(10, DECIMAL_PLACES);
+    int v = t->value * pow(10, DECIMAL_PLACES);
     for(i; i < sizeof(long) + sizeof(float); i++) {
         input.bytes[i] = v & (0xff << (i * 8));
     }
     for(i; i < sizeof(long) + sizeof(float) + sizeof(long); i++) {
-        input.bytes[i] = t.senderKey.key & (0xff << (i * 8));
+        input.bytes[i] = t->senderKey.key & (0xff << (i * 8));
     }
     for(i; i < sizeof(long) + sizeof(float) + sizeof(rsaKey); i++) {
-        input.bytes[i] = t.senderKey.n & (0xff << (i * 8));
+        input.bytes[i] = t->senderKey.n & (0xff << (i * 8));
     }
 
     buffer output = hash(input);
@@ -70,8 +70,8 @@ buffer get_transaction_hash(transaction t) {
 }
 
 // Checar assinatura
-bool check_signature(transaction t) {
-    buffer claimedHash = decrypt(t.signature, t.senderKey);
+bool check_signature(const transaction *t) {
+    buffer claimedHash = decrypt(t->signature, t->senderKey);
     buffer originalHash = get_transaction_hash(t);
     return compare_buffer(claimedHash, originalHash);
 }
@@ -85,15 +85,15 @@ transaction *new_transaction(rsaKey senderKey, long unsigned recipientKey, float
     output->inputs = inputs ? inputs : new_list();
     output->outputs = new_list();
 
-    buffer transactionHash = get_transaction_hash(*output);
+    buffer transactionHash = get_transaction_hash(output);
     output->id = transactionHash;
     return output;
 }
 
 // Obter inputs de transação
-static float get_transaction_inputs_value(transaction t) {
+static float get_transaction_inputs_value(const transaction *t) {
     float total = 0;
-    listnode* temp = t.inputs->first;
+    listnode* temp = t->inputs->first;
     while(temp) {
         if(((transactionin*)temp->val)->output) {
            total += ((transactionin*)temp->val)->output->value;
@@ -104,9 +104,9 @@ static float get_transaction_inputs_value(transaction t) {
 }
 
 // Obter outputs de transação
-static float get_transaction_outputs_value(transaction t) {
+static float get_transaction_outputs_value(const transaction *t) {
     float total = 0;
-    listnode* temp = t.outputs->first;
+    listnode* temp = t->outputs->first;
     while(temp) {
         total += ((transactionout*)temp->val)->value;
         temp = temp->next;
@@ -116,16 +116,17 @@ static float get_transaction_outputs_value(transaction t) {
 
 // Processar uma transação
 bool process_transaction(transaction *t, hashmap *outputs) {
-    if(check_signature(*t) == false) {
+    if(check_signature(t) == false) {
         printf("Transaction signature does not match.\n");
         return false;
     }
     listnode *temp = t->inputs->first;
     while(temp) {
-        ((transactionin*)(temp->val))->output = get_hashmap_val(outputs, ((transactionin*)(temp->val))->outputId);
+        ((transactionin*)(temp->val))->output = get_val_from_hashmap(outputs, ((transactionin*)(temp->val))->outputId);
         temp = temp->next;
     }
-    float inputs = get_transaction_inputs_value(*t);
+
+    float inputs = get_transaction_inputs_value(t);
     if(inputs < t->value) {
         printf("Insufficient funds.\n");
         return false;
@@ -135,12 +136,10 @@ bool process_transaction(transaction *t, hashmap *outputs) {
         return false;
     }
     float remainder = inputs - t->value;
-    t->id = get_transaction_hash(*t);
+    t->id = get_transaction_hash(t);
 
-    transactionout *senderToRecipient = malloc(sizeof(transactionout));
-    senderToRecipient = new_transactionout(t->recipientKey, t->value, t->id);
-    transactionout *senderToSender = malloc(sizeof(transactionout));
-    senderToSender = new_transactionout(t->senderKey.key, remainder, t->id);
+    transactionout *senderToRecipient = new_transactionout(t->recipientKey, t->value, t->id);
+    transactionout *senderToSender = new_transactionout(t->senderKey.key, remainder, t->id);
 
     put_val_on_list(t->outputs, senderToRecipient);
     put_val_on_list(t->outputs, senderToSender);
@@ -152,8 +151,8 @@ bool process_transaction(transaction *t, hashmap *outputs) {
     }
     temp = t->inputs->first;
     while(temp) {
-        if(!((transactionin*)temp->val)->output) {
-          rem_key_from_hashmap(outputs, ((transactionin*)temp->val)->output->id);
+        if(((transactionin*)temp->val)->output) {
+            rem_key_from_hashmap(outputs, ((transactionin*)temp->val)->outputId);
         }
         temp = temp->next;
     }

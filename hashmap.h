@@ -30,7 +30,7 @@ hashmap *new_hashmap(void);
 hashnode *new_hashnode(buffer key, void *val);
 bool put_hashnode(hashmap *h, hashnode *n);
 bool rem_key_from_hashmap(hashmap *h, buffer key);
-void *get_hashmap_val(hashmap *h, buffer key);
+void *get_val_from_hashmap(hashmap *h, buffer key);
 bool put_val_on_hashmap(hashmap *h, buffer key, void *val);
 
 // Novo hashmap
@@ -101,7 +101,7 @@ bool rem_key_from_hashmap(hashmap *h, buffer key) {
 }
 
 // Obtém um valor a partir da chave associada a ele
-void *get_hashmap_val(hashmap *h, buffer key) {
+void *get_val_from_hashmap(hashmap *h, buffer key) {
     if(!h) return NULL;
 
     hashnode *temp = h->first;

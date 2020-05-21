@@ -25,6 +25,7 @@ void add_block(block *b) {
     put_val_on_list(blockchain, b);
 }
 
+// Checa a integridade da blockchain
 bool check_blockchain_integrity(list *l) {
     block *b;
     block *c;
@@ -36,7 +37,7 @@ bool check_blockchain_integrity(list *l) {
         get_val_from_list(gTransaction->outputs, 0)
     );
 
-    int i;
+    int i, j;
     for(i = 1; i < l->size; i++) {
         b = (block*)get_val_from_list(l, i);
         c = (block*)get_val_from_list(l, i - 1);
@@ -51,9 +52,71 @@ bool check_blockchain_integrity(list *l) {
             return false;
         }
 
-        if(!mine(b->id, b->gold)) {
-            printf("Block has not been mined\n");
+        if(!mine(b->id, b->gold, false)) {
+            printf("Block has not been mined.\n");
             return false;
+        }
+
+        transactionout *out;
+        for(j = 0; j < b->transactions->size; j++) {
+            transaction *t = get_val_from_list(b->transactions, j);
+
+            if(!check_signature(t)) {
+                printf("Transaction signature does not match.\n");
+                return false;
+            }
+
+            if(get_transaction_inputs_value(t) != get_transaction_outputs_value(t)) {
+                printf("Transactions inputs and outputs are not equal.\n");
+                return false;
+            }
+
+            listnode *temp = t->inputs->first;
+            while(temp) {
+                out = (transactionout*)get_val_from_hashmap(
+                    transactionOuts,
+                    ((transactionin*)temp->val)->outputId
+                );
+                
+                if(!out) {
+                    printf("Transaction references to invalid input.\n");
+                    return false;
+                }
+
+                if(((transactionin*)temp->val)->output->value != out->value) {
+                    printf("Transaction input value is invalid.\n");
+                    return false;
+                }
+
+                rem_key_from_hashmap(
+                    transactionOuts,
+                    ((transactionin*)temp->val)->outputId
+                );
+
+                temp = temp->next;
+            }
+
+            temp = t->outputs->first;
+            while(temp) {
+                put_val_on_hashmap(
+                    transactionOuts,
+                    ((transactionout*)temp->val)->id,
+                    temp->val
+                );
+                temp = temp->next;
+            }
+
+            if(((transactionout*)get_val_from_list(t->outputs, 0))->recipientKey
+            != t->recipientKey) {
+                printf("Transaction output recipient is invalid.\n");
+                return false;
+            }
+
+            if(((transactionout*)get_val_from_list(t->outputs, 1))->recipientKey
+            != t->senderKey.key) {
+                printf("Transaction output change recipient is invalid.\n");
+                return false;
+            }
         }
     }
 
@@ -72,8 +135,7 @@ int main(void) {
 
     gTransaction = new_transaction(coinbase->publicKey, w1->publicKey.key, 100, NULL);
     gTransaction->signature = encrypt(gTransaction->id, coinbase->privateKey);
-    char gChar = '0';
-    gTransaction->id = (buffer) {&gChar, 1};
+    gTransaction->id = (buffer) {"0", 1};
 
     put_val_on_list(gTransaction->outputs, 
         new_transactionout(
