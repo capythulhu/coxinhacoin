@@ -5,13 +5,13 @@
 #define TIME_H
 #include <time.h>
 
-#include "bytes.h"
-#include "hash.h"
-#include "block.h"
-#include "transaction.h"
-#include "wallet.h"
-#include "list.h"
-#include "hashmap.h"
+#include "utils/bytes.h"
+#include "crypto/hash.h"
+#include "blockchain/block.h"
+#include "blockchain/transaction.h"
+#include "blockchain/wallet.h"
+#include "utils/list.h"
+#include "utils/hashmap.h"
 
 list *blockchain;
 transaction *gTransaction;

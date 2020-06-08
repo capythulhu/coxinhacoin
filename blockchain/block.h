@@ -7,9 +7,9 @@
 #include <time.h>
 #endif
 
-#include "bytes.h"
-#include "list.h"
-#include "transaction.h"
+#include "../utils/bytes.h"
+#include "../utils/list.h"
+#include "../blockchain/transaction.h"
 
 // Estrutura do bloco
 typedef struct _block {

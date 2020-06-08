@@ -12,12 +12,12 @@
 #include <time.h>
 #endif
 
-#include "list.h"
-#include "bytes.h"
-#include "keygen.h"
-#include "hashmap.h"
-#include "transaction.h"
-#include "transactionio.h"
+#include "../utils/list.h"
+#include "../utils/bytes.h"
+#include "../crypto/keygen.h"
+#include "../utils/hashmap.h"
+#include "../blockchain/transaction.h"
+#include "../blockchain/transactionio.h"
 
 // Estrutura da carteira
 typedef struct _wallet {

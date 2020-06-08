@@ -17,14 +17,14 @@
 #include <stdbool.h>
 #endif
 
-#include "coin.h"
-#include "hashmap.h"
-#include "list.h"
-#include "keygen.h"
-#include "hash.h"
-#include "bytes.h"
-#include "ints.h"
-#include "transactionio.h"
+#include "../coin.h"
+#include "../utils/hashmap.h"
+#include "../utils/list.h"
+#include "../crypto/keygen.h"
+#include "../crypto/hash.h"
+#include "../utils/bytes.h"
+#include "../utils/ints.h"
+#include "../blockchain/transactionio.h"
 
 // Estrutura de uma transação
 typedef struct _transaction {

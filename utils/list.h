@@ -24,7 +24,7 @@ typedef struct _list{
 } list;
 
 list *new_list(void);
-listnode *new_listnode(buffer key, void *val);
+listnode *new_listnode(void *val);
 bool put_val_on_list(list *l, void *val);
 void *get_val_from_list(list *l, int index);
 
@@ -37,7 +37,7 @@ list *new_list(void) {
 }
 
 // Novo nó da lista
-listnode *new_listnode(buffer key, void *val) {
+listnode *new_listnode(void *val) {
     listnode *output = malloc(sizeof(listnode));
     output->val = val;
     output->next = NULL;

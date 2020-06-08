@@ -1,8 +1,8 @@
 #ifndef TRANSACTIONIO_H
 #define TRANSACTIONIO_H
 
-#include "coin.h"
-#include "bytes.h"
+#include "../coin.h"
+#include "../utils/bytes.h"
 
 // Output de transação
 typedef struct _transactionout {

@@ -9,7 +9,7 @@
 // Quantidade de bits em sequência iguais a 0
 // que uma hash deve começar com para que haja
 // a mineração do bloco
-#define DIFFICULTY 8
+#define DIFFICULTY 4
 // Tamanho em bits de um primo gerado
 #define PRIME_LENGTH 8
 // Máximo de iterações do Algoritmo de Euclides

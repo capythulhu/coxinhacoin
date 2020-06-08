@@ -16,9 +16,9 @@
 #include <time.h>
 #endif
 
-#include "coin.h"
-#include "bytes.h"
-#include "ints.h"
+#include "../coin.h"
+#include "../utils/bytes.h"
+#include "../utils/ints.h"
 
 // Estrutura de uma chave
 typedef struct _rsaKey {
@@ -26,7 +26,7 @@ typedef struct _rsaKey {
     long unsigned n;
 } rsaKey;
 
-static void div_l(long *r, long *q, long a, long b);
+static void div_l(unsigned long *r, unsigned long *q, long a, long b);
 static unsigned long get_d(unsigned long a, unsigned long b);
 static long pow_mod_l(unsigned long long a, unsigned long long b, unsigned long n);
 unsigned short rand_prime(void);
@@ -35,7 +35,7 @@ buffer decrypt(ibuffer C, rsaKey privateKey);
 unsigned long *get_keys(void);
 
 // Divisão de longs que salva o quociente e o resto
-static void div_l(long *r, long *q, long a, long b) {
+static void div_l(unsigned long *r, unsigned long *q, long a, long b) {
     if(a >= 0) {
         *q = 0;
         *r = a;
